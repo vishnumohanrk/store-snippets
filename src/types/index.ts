@@ -5,3 +5,5 @@ export type RCProps = {
 export type Never<T> = {
   [K in keyof T]?: never;
 };
+
+export type TSnippetVariant = 'full' | 'list';
