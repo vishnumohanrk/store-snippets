@@ -1,0 +1,35 @@
+datasource db {
+  provider     = "mysql"
+  relationMode = "prisma"
+  url          = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Snippet {
+  id        String     @id @default(cuid())
+  title     String
+  codeText  String     @db.LongText
+  codeHTML  String     @db.LongText
+  isPrivate Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  bookmarks Bookmark[]
+
+  @@index([userId])
+  @@index([isPrivate])
+}
+
+model Bookmark {
+  id        String  @id @default(cuid())
+  userId    String
+  snippetId String
+  snippet   Snippet @relation(fields: [snippetId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([snippetId])
+  @@index([userId, snippetId])
+}
