@@ -5,5 +5,16 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --ht: calc(100svh - 6rem);
+  }
+
+  @screen md {
+    :root {
+      --ht: calc(100svh - 2rem);
+    }
+  }
+
+  .nav-item svg {
+    @apply h-8 w-8 md:h-6 md:w-6;
   }
 }
