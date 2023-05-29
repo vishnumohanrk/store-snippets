@@ -33,6 +33,7 @@ export function NavBar() {
 
         {isSignedIn && (
           <>
+            {/* @ts-expect-error TODO */}
             <NavItem href="/my-snippets" icon={<MdCode />}>
               <SRText>My Snippets</SRText>
             </NavItem>

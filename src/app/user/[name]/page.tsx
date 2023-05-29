@@ -1,61 +1,42 @@
+import { auth } from '@clerk/nextjs';
+
 import { Author } from '@/components/snippet/author';
 import { SnippetCard } from '@/components/snippet/card';
+import { SnippetList } from '@/components/snippet/list';
+import { getUserFromUserName } from '@/lib/clerk';
+import { db } from '@/lib/db';
 
-export default function UserPage() {
+type Props = { params: { name: string } };
+
+async function getUserSnippets(id: string) {
+  const snippets = await db.snippet.findMany({
+    where: { userId: id },
+    orderBy: { updatedAt: 'desc' },
+  });
+
+  const { userId } = auth();
+
+  return id === userId ? snippets : snippets.filter((i) => !i.isPrivate);
+}
+
+export default async function UserPage({ params }: Props) {
+  const user = await getUserFromUserName(params.name);
+  const snippets = await getUserSnippets(user.id);
+
   return (
-    <>
-      <Author
-        userName="Lorem"
-        variant="userPage"
-        subText="Lorem Ipsum"
-        image="https://picsum.photos/id/32/100"
-      >
-        <p>7 Snippets</p>
-      </Author>
-      <ul className="space-y-7">
-        <li>
-          <SnippetCard
-            id="123"
-            isPrivate
-            variant="list"
-            codeHTML={code}
-            codeText={code}
-            title="layout.tsx"
-          />
-        </li>
-        <li>
-          <SnippetCard
-            id="123"
-            isPrivate
-            variant="list"
-            codeHTML={code}
-            codeText={code}
-            title="layout.tsx"
-          />
-        </li>
-        <li>
-          <SnippetCard
-            id="123"
-            isPrivate
-            variant="list"
-            codeHTML={code}
-            codeText={code}
-            title="layout.tsx"
-          />
-        </li>
-        <li>
-          <SnippetCard
-            id="123"
-            isPrivate
-            variant="list"
-            codeHTML={code}
-            codeText={code}
-            title="layout.tsx"
-          />
-        </li>
-      </ul>
-    </>
+    <section>
+      <Author {...user} variant="userPage" />
+      <SnippetList heading={`@${params.name}'s snippets`}>
+        {snippets.map((i) => (
+          <SnippetCard {...i} key={i.id} variant="list" />
+        ))}
+      </SnippetList>
+    </section>
   );
 }
 
-const code = 'console.log(99);';
+export function generateMetadata({ params }: Props) {
+  return {
+    title: `@${params.name}'s snippets`,
+  };
+}

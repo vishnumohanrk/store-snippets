@@ -1,191 +1,31 @@
-import { Author } from '@/components/snippet/author';
 import { SnippetCard } from '@/components/snippet/card';
+import { SnippetList } from '@/components/snippet/list';
+import { mapSnippetsWithUser } from '@/lib/clerk';
+import { db } from '@/lib/db';
 
-export default function AppHome() {
+async function getAllPublicSnippets() {
+  const snippets = await db.snippet.findMany({
+    where: { isPrivate: false },
+    orderBy: { updatedAt: 'desc' },
+  });
+
+  return mapSnippetsWithUser(snippets);
+}
+
+export default async function AppHome() {
+  const snippets = await getAllPublicSnippets();
+
   return (
-    <ul className="space-y-6">
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-      <li>
-        <Author
-          variant="list"
-          userName="loki"
-          subText="2 days ago"
-          image="https://picsum.photos/id/32/100"
-        >
-          <p>7 bookmarks</p>
-        </Author>
-        <SnippetCard
-          id="123"
-          isPrivate
-          variant="list"
-          codeHTML={code}
-          codeText={code}
-          title="layout.tsx"
-        />
-      </li>
-    </ul>
+    <section>
+      <SnippetList heading="All Public Snippets">
+        {snippets.map((i) => (
+          <SnippetCard {...i} key={i.id} variant="list" author={i.author} />
+        ))}
+      </SnippetList>
+    </section>
   );
 }
 
-const code = 'console.log(99);';
+export const metadata = {
+  title: 'Discover',
+};
