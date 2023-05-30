@@ -34,7 +34,11 @@ export const validateOwnerAndReturn = cache(async (id: string) => {
 
   const snippet = await db.snippet.findFirst({
     where: { id, userId: currentUser.id },
-    select: { title: true, codeText: true },
+    select: {
+      title: true,
+      codeText: true,
+      isPrivate: true,
+    },
   });
 
   if (!snippet) {

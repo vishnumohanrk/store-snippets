@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
+import { SnippetAction } from '@/components/snippet/action';
 import { BookmarkButton } from '@/components/snippet/bookmark-button';
 import { SnippetCard } from '@/components/snippet/card';
 import { EditLink } from '@/components/snippet/edit-link';
@@ -45,6 +46,9 @@ export default async function SnippetPage({ params }: SnippetPageProps) {
           <BookmarkButton isBookmarked={isBookmarked} />
         )}
       </SnippetCard>
+      {isOwner && (
+        <SnippetAction id={snippet.id} isPrivate={snippet.isPrivate} />
+      )}
     </>
   );
 }
