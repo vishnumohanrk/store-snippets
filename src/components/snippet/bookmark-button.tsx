@@ -1,21 +1,24 @@
-import { MdBookmark, MdBookmarkBorder } from 'react-icons/md';
+'use client';
 
-import { ICON_BTN_CLASS } from '../utils';
+import { experimental_useFormStatus as useFormStatus } from 'react-dom';
 
-type Props = {
-  isBookmarked: boolean;
+import type { RCProps } from '@/types';
+
+type Props = RCProps & {
+  title: string;
 };
 
-export function BookmarkButton({ isBookmarked }: Props) {
-  const Icon = isBookmarked ? MdBookmark : MdBookmarkBorder;
+export function BookmarkButton({ children, title }: Props) {
+  const { pending } = useFormStatus();
 
   return (
     <button
       type="submit"
-      title={isBookmarked ? 'Remove Bookmark' : 'Bookmark'}
-      className={ICON_BTN_CLASS}
+      title={title}
+      disabled={pending}
+      className="inline-flex h-full w-full items-center justify-center disabled:cursor-wait disabled:opacity-70"
     >
-      <Icon size={19} />
+      {children}
     </button>
   );
 }

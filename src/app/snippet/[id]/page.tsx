@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
 import { SnippetAction } from '@/components/snippet/action';
-import { BookmarkButton } from '@/components/snippet/bookmark-button';
+import { BookmarkForm } from '@/components/snippet/bookmark';
 import { SnippetCard } from '@/components/snippet/card';
 import { EditLink } from '@/components/snippet/edit-link';
 import { db } from '@/lib/db';
@@ -43,7 +43,7 @@ export default async function SnippetPage({ params }: SnippetPageProps) {
       <SnippetCard {...snippet} author={snippet.user} variant="full">
         {isOwner && <EditLink id={snippet.id} />}
         {isBookmarked !== null && (
-          <BookmarkButton isBookmarked={isBookmarked} />
+          <BookmarkForm id={snippet.id} isBookmarked={isBookmarked} />
         )}
       </SnippetCard>
       {isOwner && (
