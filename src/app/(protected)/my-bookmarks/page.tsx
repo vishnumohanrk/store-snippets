@@ -15,13 +15,17 @@ async function getBookmarks() {
 
   const results = await db.bookmark.findMany({
     where: { userId: currentUser.id },
-    include: { snippet: true, user: { select: USER_SELECT } },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      snippet: {
+        include: {
+          user: { select: USER_SELECT },
+        },
+      },
+    },
   });
 
-  return results.map((i) => ({
-    ...i.snippet,
-    user: i.user,
-  }));
+  return results.map((i) => i.snippet);
 }
 
 export default async function MyBookmarks() {

@@ -80,11 +80,12 @@ model Snippet {
 }
 
 model Bookmark {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
   userId    String
   snippetId String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  snippet   Snippet @relation(fields: [snippetId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snippet   Snippet  @relation(fields: [snippetId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([snippetId])

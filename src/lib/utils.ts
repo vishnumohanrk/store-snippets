@@ -45,7 +45,7 @@ export const validateOwnerAndReturn = cache(async (id: string) => {
     notFound();
   }
 
-  return snippet;
+  return { ...snippet, userId: currentUser.id };
 });
 
 export const USER_SELECT = {
