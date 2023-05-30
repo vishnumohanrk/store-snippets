@@ -1,11 +1,24 @@
 import Link from 'next/link';
 
+import { cn } from '../utils';
+
+type Props = React.PropsWithChildren<{
+  className?: string;
+  showHomeLink?: boolean;
+}>;
+
 export function PageCenter({
   children,
+  className,
   showHomeLink = false,
-}: React.PropsWithChildren<{ showHomeLink?: boolean }>) {
+}: Props) {
   return (
-    <div className="flex min-h-[--ht] flex-col items-center justify-center gap-3 p-4">
+    <div
+      className={cn(
+        'flex min-h-[--ht] flex-col items-center justify-center gap-3 p-4',
+        className
+      )}
+    >
       {children}
       {showHomeLink && (
         <Link href="/" className="font-medium underline">

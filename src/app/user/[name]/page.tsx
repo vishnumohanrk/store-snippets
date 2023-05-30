@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 import { Author } from '@/components/snippet/author';
 import { SnippetCard } from '@/components/snippet/card';
@@ -11,7 +13,7 @@ type Props = {
   params: { name: string };
 };
 
-async function getUserFromUserName(userName: string) {
+const getUserFromUserName = cache(async (userName: string) => {
   const user = await db.user.findUnique({
     where: { userName },
     select: USER_SELECT,
@@ -22,7 +24,7 @@ async function getUserFromUserName(userName: string) {
   }
 
   return user;
-}
+});
 
 async function getUserSnippets(id: string) {
   const [currentUser, snippets] = await Promise.all([
@@ -33,19 +35,38 @@ async function getUserSnippets(id: string) {
     }),
   ]);
 
-  return id === currentUser?.id
-    ? snippets
-    : snippets.filter((i) => !i.isPrivate);
+  const isOwner = id === currentUser?.id;
+
+  return {
+    isOwner,
+    snippets: isOwner ? snippets : snippets.filter((i) => !i.isPrivate),
+  };
 }
 
 export default async function UserPage({ params }: Props) {
   const user = await getUserFromUserName(params.name);
-  const snippets = await getUserSnippets(user.id);
+  const { isOwner, snippets } = await getUserSnippets(user.id);
 
   return (
     <section>
       <Author {...user} variant="userPage" />
-      <SnippetList heading={`@${params.name}'s snippets`}>
+      <SnippetList
+        empty={snippets.length === 0}
+        heading={`@${user.userName}'s snippets`}
+        emptyElem={
+          <>
+            <p className="text-2xl font-semibold text-neutral-400">
+              {isOwner ? `You don't` : `${user.userName} doesn't`} have any
+              snippets yet.
+            </p>
+            {isOwner && (
+              <Link href="/new" className="font-bold underline">
+                Create New Snippet
+              </Link>
+            )}
+          </>
+        }
+      >
         {snippets.map((i) => (
           <SnippetCard {...i} key={i.id} variant="list" />
         ))}
@@ -54,8 +75,10 @@ export default async function UserPage({ params }: Props) {
   );
 }
 
-export function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props) {
+  const { userName } = await getUserFromUserName(params.name);
+
   return {
-    title: `@${params.name}'s snippets`,
+    title: `${userName}'s snippets`,
   };
 }

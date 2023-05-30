@@ -1,7 +1,6 @@
 import './globals.css';
 
 import { Inter } from 'next/font/google';
-import { Suspense } from 'react';
 
 import { NavBar } from '@/components/nav-bar';
 import type { RCProps } from '@/types';
@@ -20,10 +19,7 @@ export default function RootLayout({ children }: RCProps) {
   return (
     <html lang="en" className={inter.variable}>
       <body className="bg-neutral-950 font-sans text-neutral-50 antialiased">
-        <Suspense>
-          {/* @ts-expect-error async RSC */}
-          <NavBar />
-        </Suspense>
+        <NavBar />
         <main className="mx-auto max-w-screen-lg p-4 max-md:pb-20 md:pl-[17rem]">
           {children}
         </main>
