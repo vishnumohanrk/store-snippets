@@ -49,3 +49,7 @@ export default async function MyBookmarks() {
     </section>
   );
 }
+
+export const metadata = {
+  title: 'My Bookmarks',
+};

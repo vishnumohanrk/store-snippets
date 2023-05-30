@@ -27,7 +27,7 @@ async function changeVisibility(id: string) {
   redirect(`/snippet/${id}`);
 }
 
-export async function deleteSnippet(id: string) {
+async function deleteSnippet(id: string) {
   await validateOwnerAndReturn(id);
   await db.snippet.delete({
     where: { id },
