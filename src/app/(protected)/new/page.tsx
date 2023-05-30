@@ -1,26 +1,29 @@
-import { auth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 
 import { SnippetForm } from '@/components/snippet/form';
 import { db } from '@/lib/db';
+import { getCurrentUser } from '@/lib/session';
 import { getSnippetFromForm } from '@/lib/utils';
 
 async function action(formData: FormData) {
   'use server';
 
-  const { userId } = auth();
+  const [currentUser, fromForm] = await Promise.all([
+    getCurrentUser(),
+    getSnippetFromForm(formData),
+  ]);
 
-  if (!userId) {
+  if (!currentUser) {
     throw new Error('Unauthorized');
   }
 
-  const fromForm = await getSnippetFromForm(formData);
   const snippet = await db.snippet.create({
     data: {
       ...fromForm,
-      userId,
+      userId: currentUser.id,
       isPrivate: formData.has('private'),
     },
+    select: { id: true },
   });
 
   redirect(`/snippet/${snippet.id}`);

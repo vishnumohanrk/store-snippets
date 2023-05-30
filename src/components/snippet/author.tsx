@@ -10,7 +10,7 @@ type Props = TAuthorDetails & {
   variant: TSnippetVariant | 'userPage';
 };
 
-export function Author({ subText, variant, username, imageUrl }: Props) {
+export function Author({ subText, variant, image, userName }: Props) {
   const className = cn(
     variant !== 'list' && 'text-lg',
     variant !== 'userPage' && 'hover:underline',
@@ -25,16 +25,16 @@ export function Author({ subText, variant, username, imageUrl }: Props) {
         width={size}
         height={size}
         loading="lazy"
-        src={imageUrl}
-        alt={`@${username}`}
+        src={image || ''}
+        alt={`@${userName}`}
         className="rounded-full object-cover"
       />
       <div className="ml-3 flex-1">
-        {variant === 'userPage' || !username ? (
-          <p className={className}>{username ?? '[nousername]'}</p>
+        {variant === 'userPage' || !userName ? (
+          <p className={className}>{userName ?? '[nousername]'}</p>
         ) : (
-          <Link href={`/user/${username}`} className={className}>
-            {username}
+          <Link href={`/user/${userName}`} className={className}>
+            {userName}
           </Link>
         )}
         <div className="text-sm">{subText}</div>

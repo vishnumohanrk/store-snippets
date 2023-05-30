@@ -10,14 +10,18 @@ import {
   MdOutlineExplore,
 } from 'react-icons/md';
 
+import { getCurrentUser } from '@/lib/session';
+
 import { SRText } from '../shared/sr-text';
 import { AuthButton } from './auth-button';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
 
-// TODO: refactor
-export function NavBar() {
-  const isSignedIn = Math.random() > 0.5;
+// TODOasync : refactor
+export async function NavBar() {
+  const currentUser = await getCurrentUser();
+
+  const isSignedIn = !!currentUser;
 
   return (
     <nav className="fixed bottom-0 z-50 w-full flex-col overflow-auto bg-neutral-900 max-md:border-t md:h-[100svh] md:w-64 md:border-r md:p-px">
@@ -34,7 +38,7 @@ export function NavBar() {
         {isSignedIn && (
           <>
             {/* @ts-expect-error TODO */}
-            <NavItem href="/my-snippets" icon={<MdCode />}>
+            <NavItem href={`/user/${currentUser.userName}`} icon={<MdCode />}>
               <SRText>My Snippets</SRText>
             </NavItem>
             <NavItem

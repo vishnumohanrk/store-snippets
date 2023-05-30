@@ -21,6 +21,7 @@ export default function RootLayout({ children }: RCProps) {
     <html lang="en" className={inter.variable}>
       <body className="bg-neutral-950 font-sans text-neutral-50 antialiased">
         <Suspense>
+          {/* @ts-expect-error async RSC */}
           <NavBar />
         </Suspense>
         <main className="mx-auto max-w-screen-lg p-4 max-md:pb-20 md:pl-[17rem]">

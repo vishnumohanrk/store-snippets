@@ -1,15 +1,16 @@
 import { SnippetCard } from '@/components/snippet/card';
 import { SnippetList } from '@/components/snippet/list';
-import { mapSnippetsWithUser } from '@/lib/clerk';
 import { db } from '@/lib/db';
+import { USER_SELECT } from '@/lib/utils';
 
 async function getAllPublicSnippets() {
   const snippets = await db.snippet.findMany({
     where: { isPrivate: false },
     orderBy: { updatedAt: 'desc' },
+    include: { user: { select: USER_SELECT } },
   });
 
-  return mapSnippetsWithUser(snippets);
+  return snippets;
 }
 
 export default async function AppHome() {
@@ -19,7 +20,7 @@ export default async function AppHome() {
     <section>
       <SnippetList heading="All Public Snippets">
         {snippets.map((i) => (
-          <SnippetCard {...i} key={i.id} variant="list" author={i.author} />
+          <SnippetCard {...i} key={i.id} variant="list" author={i.user} />
         ))}
       </SnippetList>
     </section>
@@ -29,3 +30,5 @@ export default async function AppHome() {
 export const metadata = {
   title: 'Discover',
 };
+
+export const dynamic = 'force-dynamic';

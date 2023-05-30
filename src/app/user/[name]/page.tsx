@@ -1,22 +1,41 @@
-import { auth } from '@clerk/nextjs';
+import { notFound } from 'next/navigation';
 
 import { Author } from '@/components/snippet/author';
 import { SnippetCard } from '@/components/snippet/card';
 import { SnippetList } from '@/components/snippet/list';
-import { getUserFromUserName } from '@/lib/clerk';
 import { db } from '@/lib/db';
+import { getCurrentUser } from '@/lib/session';
+import { USER_SELECT } from '@/lib/utils';
 
-type Props = { params: { name: string } };
+type Props = {
+  params: { name: string };
+};
 
-async function getUserSnippets(id: string) {
-  const snippets = await db.snippet.findMany({
-    where: { userId: id },
-    orderBy: { updatedAt: 'desc' },
+async function getUserFromUserName(userName: string) {
+  const user = await db.user.findUnique({
+    where: { userName },
+    select: USER_SELECT,
   });
 
-  const { userId } = auth();
+  if (!user) {
+    notFound();
+  }
 
-  return id === userId ? snippets : snippets.filter((i) => !i.isPrivate);
+  return user;
+}
+
+async function getUserSnippets(id: string) {
+  const [currentUser, snippets] = await Promise.all([
+    getCurrentUser(),
+    db.snippet.findMany({
+      where: { userId: id },
+      orderBy: { updatedAt: 'desc' },
+    }),
+  ]);
+
+  return id === currentUser?.id
+    ? snippets
+    : snippets.filter((i) => !i.isPrivate);
 }
 
 export default async function UserPage({ params }: Props) {

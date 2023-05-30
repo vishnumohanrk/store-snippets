@@ -1,5 +1,7 @@
 'use client';
 
+import { signIn, signOut } from 'next-auth/react';
+
 import type { RCProps } from '@/types';
 
 import { NAV_ITEM_CLASS } from '../utils';
@@ -10,7 +12,11 @@ type Props = RCProps & {
 
 export function AuthButton({ children, isSignedIn }: Props) {
   function handleClick() {
-    console.log(isSignedIn);
+    if (isSignedIn) {
+      signOut({ callbackUrl: '/' });
+    } else {
+      signIn('github');
+    }
   }
 
   return (

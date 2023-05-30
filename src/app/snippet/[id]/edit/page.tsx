@@ -1,35 +1,14 @@
-import { auth } from '@clerk/nextjs';
-import { notFound, redirect } from 'next/navigation';
-import { cache } from 'react';
+import { redirect } from 'next/navigation';
 
 import { SnippetForm } from '@/components/snippet/form';
 import { db } from '@/lib/db';
-import { getSnippetFromForm } from '@/lib/utils';
+import { getSnippetFromForm, validateOwnerAndReturn } from '@/lib/utils';
 import type { SnippetPageProps } from '@/types';
-
-const validateAndReturn = cache(async (id: string) => {
-  const { userId } = auth();
-
-  if (!userId) {
-    throw new Error('Unauthorized');
-  }
-
-  const snippet = await db.snippet.findFirst({
-    where: { id, userId },
-    select: { title: true, codeText: true },
-  });
-
-  if (!snippet) {
-    notFound();
-  }
-
-  return snippet;
-});
 
 async function updateSnippet(id: string, formData: FormData) {
   const [fromForm] = await Promise.all([
     getSnippetFromForm(formData),
-    validateAndReturn(id),
+    validateOwnerAndReturn(id),
   ]);
 
   await db.snippet.update({
@@ -41,11 +20,11 @@ async function updateSnippet(id: string, formData: FormData) {
 }
 
 export default async function EditPage({ params }: SnippetPageProps) {
-  const { title, codeText } = await validateAndReturn(params.id);
+  const { title, codeText } = await validateOwnerAndReturn(params.id);
 
   async function updateAction(formData: FormData) {
     'use server';
-    updateSnippet(params.id, formData);
+    await updateSnippet(params.id, formData);
   }
 
   return (
@@ -59,7 +38,7 @@ export default async function EditPage({ params }: SnippetPageProps) {
 }
 
 export async function generateMetadata({ params }: SnippetPageProps) {
-  const { title } = await validateAndReturn(params.id);
+  const { title } = await validateOwnerAndReturn(params.id);
 
   return {
     title: `Editing ${title}`,
