@@ -9,7 +9,6 @@ export function NavBar() {
       <Logo />
       <ul className="flex md:mt-1 md:flex-col md:gap-y-1 [&>*]:w-full">
         <Suspense>
-          {/* @ts-expect-error async RSC */}
           <NavList />
         </Suspense>
       </ul>
