@@ -1,4 +1,5 @@
 import { auth, clerkClient } from '@clerk/nextjs';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
@@ -41,12 +42,28 @@ async function getUserSnippets(authorId: string) {
 
 export default async function UserPage({ params }: Props) {
   const user = await getUserByUserName(params.name);
-  const { snippets } = await getUserSnippets(user.id);
+  const { snippets, self } = await getUserSnippets(user.id);
 
   return (
     <section>
       <Author {...user} variant="userPage" />
-      <SnippetList heading={`@${user.username}'s snippets`}>
+      <SnippetList
+        heading={`@${user.username}'s snippets`}
+        empty={snippets.length === 0}
+        emptyElem={
+          <>
+            <p className="text-2xl font-semibold text-neutral-400">
+              {self ? `You don't` : `@${user.username} doesn't`} have any
+              snippets yet.
+            </p>
+            {self && (
+              <Link href="/new" className="font-bold underline">
+                Create New Snippet
+              </Link>
+            )}
+          </>
+        }
+      >
         {snippets.map((i) => (
           <SnippetCard {...i} key={i.id} variant="list" />
         ))}

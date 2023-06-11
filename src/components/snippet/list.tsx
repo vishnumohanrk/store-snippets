@@ -15,7 +15,7 @@ export function SnippetList({ heading, children, empty, emptyElem }: Props) {
       {empty ? (
         <PageCenter className="min-h-[75svh]">{emptyElem}</PageCenter>
       ) : (
-        <ul className="space-y-6 pb-20">{children}</ul>
+        <ul className="space-y-6">{children}</ul>
       )}
     </>
   );

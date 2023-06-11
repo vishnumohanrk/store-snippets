@@ -57,7 +57,7 @@ export function SnippetAction({
   }
 
   return (
-    <ButtonGroup className="mb-8 mt-4">
+    <ButtonGroup className="mt-4">
       <AlertDialog
         action={visibilityAction}
         actionElem={<FormButton variant="primary">Yes</FormButton>}

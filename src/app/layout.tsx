@@ -1,6 +1,7 @@
 import './globals.css';
 
 import { ClerkProvider } from '@clerk/nextjs';
+import { dark } from '@clerk/themes';
 import { Inter } from 'next/font/google';
 
 import { NavBar } from '@/components/nav-bar';
@@ -13,11 +14,11 @@ const inter = Inter({
 
 export default function RootLayout({ children }: RCProps) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en" className={inter.variable}>
         <body className="bg-neutral-950 font-sans text-neutral-50 antialiased">
           <NavBar />
-          <main className="mx-auto max-w-screen-lg p-4 max-md:pb-20 md:pl-[17rem]">
+          <main className="mx-auto max-w-screen-lg p-4 pb-20 md:pl-[17rem]">
             {children}
           </main>
         </body>

@@ -27,7 +27,15 @@ export default async function MyBookmarks() {
 
   return (
     <section>
-      <SnippetList heading="My Bookmarks">
+      <SnippetList
+        heading="My Bookmarks"
+        empty={snippets.length === 0}
+        emptyElem={
+          <p className="text-2xl font-semibold text-neutral-400">
+            You haven&apos;t bookmarked any snippets yet
+          </p>
+        }
+      >
         {snippets.map((i) => (
           <SnippetCard {...i} key={i.id} variant="list" />
         ))}
