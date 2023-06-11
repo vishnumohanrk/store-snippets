@@ -9,7 +9,7 @@ generator client {
 }
 
 model Snippet {
-  id        String     @id @default(uuid())
+  id        String     @id @default(cuid())
   title     String
   codeText  String     @db.LongText
   codeHTML  String     @db.LongText
@@ -24,7 +24,7 @@ model Snippet {
 }
 
 model Bookmark {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   userId    String
   snippetId String
