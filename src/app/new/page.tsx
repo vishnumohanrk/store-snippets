@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { SnippetForm } from '@/components/snippet/form';
@@ -23,6 +24,8 @@ async function action(formData: FormData) {
     select: { id: true },
   });
 
+  revalidatePath('/');
+  revalidatePath('/user/[name]');
   redirect(`/snippet/${snippet.id}`);
 }
 

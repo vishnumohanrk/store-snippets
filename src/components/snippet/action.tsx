@@ -1,4 +1,5 @@
 import type { Snippet } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { MdDelete, MdRemoveRedEye } from 'react-icons/md';
 
@@ -24,6 +25,9 @@ async function changeVisibility(id: string) {
     });
   }
 
+  revalidatePath('/');
+  revalidatePath('/user/[name]');
+  revalidatePath('/bookmarks');
   redirect(`/snippet/${id}`);
 }
 
@@ -33,6 +37,8 @@ async function deleteSnippet(id: string) {
     where: { id },
   });
 
+  revalidatePath('/user/[name]');
+  revalidatePath('/bookmarks');
   redirect('/');
 }
 

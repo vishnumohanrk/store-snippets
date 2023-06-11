@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { SnippetForm } from '@/components/snippet/form';
@@ -16,6 +17,9 @@ async function updateSnippet(id: string, formData: FormData) {
     data: fromForm,
   });
 
+  revalidatePath('/');
+  revalidatePath('/user/[name]');
+  revalidatePath('/bookmarks');
   redirect(`/snippet/${id}`);
 }
 

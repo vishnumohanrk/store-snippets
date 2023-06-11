@@ -35,7 +35,7 @@ async function bookmarkSnippet(id: string, isBookmarked: boolean) {
   }
 
   revalidatePath('/snippet/[id]');
-  revalidatePath('/my-bookmarks');
+  revalidatePath('/bookmarks');
 }
 
 export function BookmarkForm({ id, isBookmarked }: Props) {
