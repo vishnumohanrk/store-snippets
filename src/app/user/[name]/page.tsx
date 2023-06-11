@@ -1,72 +1,52 @@
-import Link from 'next/link';
+import { auth, clerkClient } from '@clerk/nextjs';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
 import { Author } from '@/components/snippet/author';
 import { SnippetCard } from '@/components/snippet/card';
 import { SnippetList } from '@/components/snippet/list';
+import { filterUserForUI } from '@/lib/clerk';
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/session';
-import { USER_SELECT } from '@/lib/utils';
 
 type Props = {
   params: { name: string };
 };
 
-const getUserFromUserName = cache(async (userName: string) => {
-  const user = await db.user.findUnique({
-    where: { userName },
-    select: USER_SELECT,
+const getUserByUserName = cache(async (name: string) => {
+  const [user] = await clerkClient.users.getUserList({
+    username: [name],
   });
 
   if (!user) {
     notFound();
   }
 
-  return user;
+  return filterUserForUI(user);
 });
 
-async function getUserSnippets(id: string) {
-  const [currentUser, snippets] = await Promise.all([
-    getCurrentUser(),
-    db.snippet.findMany({
-      where: { userId: id },
-      orderBy: { updatedAt: 'desc' },
-    }),
-  ]);
+async function getUserSnippets(authorId: string) {
+  const { userId } = auth();
+  const snippets = await db.snippet.findMany({
+    where: { authorId },
+    orderBy: { updatedAt: 'desc' },
+  });
 
-  const isOwner = id === currentUser?.id;
+  const self = authorId === userId;
 
   return {
-    isOwner,
-    snippets: isOwner ? snippets : snippets.filter((i) => !i.isPrivate),
+    self,
+    snippets: self ? snippets : snippets.filter((i) => !i.isPrivate),
   };
 }
 
 export default async function UserPage({ params }: Props) {
-  const user = await getUserFromUserName(params.name);
-  const { isOwner, snippets } = await getUserSnippets(user.id);
+  const user = await getUserByUserName(params.name);
+  const { snippets } = await getUserSnippets(user.id);
 
   return (
     <section>
       <Author {...user} variant="userPage" />
-      <SnippetList
-        empty={snippets.length === 0}
-        heading={`@${user.userName}'s snippets`}
-        emptyElem={
-          <>
-            <p className="text-2xl font-semibold text-neutral-400">
-              {isOwner ? `You don't` : `${user.userName} doesn't`} have any
-              snippets yet.
-            </p>
-            {isOwner && (
-              <Link href="/new" className="font-bold underline">
-                Create New Snippet
-              </Link>
-            )}
-          </>
-        }
-      >
+      <SnippetList heading={`@${user.username}'s snippets`}>
         {snippets.map((i) => (
           <SnippetCard {...i} key={i.id} variant="list" />
         ))}
@@ -75,10 +55,10 @@ export default async function UserPage({ params }: Props) {
   );
 }
 
-export async function generateMetadata({ params }: Props) {
-  const { userName } = await getUserFromUserName(params.name);
+// export async function generateMetadata({ params }: Props) {
+//   const { username } = await getUserByUserName(params.name);
 
-  return {
-    title: `${userName}'s snippets`,
-  };
-}
+//   return {
+//     title: `${username}'s snippets`,
+//   };
+// }

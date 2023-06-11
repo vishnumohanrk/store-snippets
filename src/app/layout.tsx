@@ -1,5 +1,6 @@
 import './globals.css';
 
+import { ClerkProvider } from '@clerk/nextjs';
 import { Inter } from 'next/font/google';
 
 import { NavBar } from '@/components/nav-bar';
@@ -12,21 +13,24 @@ const inter = Inter({
 
 export default function RootLayout({ children }: RCProps) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="bg-neutral-950 font-sans text-neutral-50 antialiased">
-        <NavBar />
-        <main className="mx-auto max-w-screen-lg p-4 max-md:pb-20 md:pl-[17rem]">
-          {children}
-        </main>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={inter.variable}>
+        <body className="bg-neutral-950 font-sans text-neutral-50 antialiased">
+          <NavBar />
+          <main className="mx-auto max-w-screen-lg p-4 max-md:pb-20 md:pl-[17rem]">
+            {children}
+          </main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
 
 export const metadata = {
-  title: {
-    default: 'Store Snippets',
-    template: `%s | Store Snippets`,
-  },
-  description: 'A Code Snippet sharing, saving app',
+  // title: {
+  //   absolute: 'Store Snippets',
+  //   template: `%s | Store Snippets`,
+  // },
+  title: 'Store Snippets',
+  description: 'A Code Snippet storing, sharing app',
 };

@@ -1,29 +1,20 @@
-'use client';
-
-import { signIn, signOut } from 'next-auth/react';
-
-import type { RCProps } from '@/types';
+import { SignInButton, SignOutButton } from '@clerk/nextjs';
+import { MdLogin, MdLogout } from 'react-icons/md';
 
 import { NAV_ITEM_CLASS } from '../utils';
+import { NavLabel } from './nav-label';
 
-type Props = RCProps & {
-  isSignedIn: boolean;
-};
-
-export function AuthButton({ children, isSignedIn }: Props) {
-  function handleClick() {
-    if (isSignedIn) {
-      signOut({ callbackUrl: '/' });
-    } else {
-      signIn('github');
-    }
-  }
+export function AuthButton({ authed }: { authed: boolean }) {
+  const Comp = authed ? SignOutButton : SignInButton;
 
   return (
-    <li>
-      <button type="button" onClick={handleClick} className={NAV_ITEM_CLASS}>
-        {children}
-      </button>
+    <li className="w-full">
+      <Comp mode="modal">
+        <button type="button" className={NAV_ITEM_CLASS}>
+          {authed ? <MdLogout /> : <MdLogin />}
+          <NavLabel alwaysShow={!authed}>Sign {authed ? 'out' : 'in'}</NavLabel>
+        </button>
+      </Comp>
     </li>
   );
 }

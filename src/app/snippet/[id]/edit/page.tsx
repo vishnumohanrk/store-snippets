@@ -37,10 +37,10 @@ export default async function EditPage({ params }: SnippetPageProps) {
   );
 }
 
-export async function generateMetadata({ params }: SnippetPageProps) {
-  const { title } = await validateOwnerAndReturn(params.id);
+// export async function generateMetadata({ params }: SnippetPageProps) {
+//   const { title } = await validateOwnerAndReturn(params.id);
 
-  return {
-    title: `Editing ${title}`,
-  };
-}
+//   return {
+//     title: `Editing ${title}`,
+//   };
+// }

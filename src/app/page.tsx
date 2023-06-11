@@ -1,34 +1,31 @@
 import { SnippetCard } from '@/components/snippet/card';
 import { SnippetList } from '@/components/snippet/list';
+import { mapSnippetsWithAuthor } from '@/lib/clerk';
 import { db } from '@/lib/db';
-import { USER_SELECT } from '@/lib/utils';
 
-async function getAllPublicSnippets() {
+async function getPublicSnippets() {
   const snippets = await db.snippet.findMany({
     where: { isPrivate: false },
     orderBy: { updatedAt: 'desc' },
-    include: { user: { select: USER_SELECT } },
   });
 
-  return snippets;
+  return mapSnippetsWithAuthor(snippets);
 }
 
 export default async function AppHome() {
-  const snippets = await getAllPublicSnippets();
+  const snippets = await getPublicSnippets();
 
   return (
     <section>
-      <SnippetList heading="All Public Snippets">
+      <SnippetList heading="Discover Public Snippets">
         {snippets.map((i) => (
-          <SnippetCard {...i} key={i.id} variant="list" author={i.user} />
+          <SnippetCard {...i} key={i.id} variant="list" />
         ))}
       </SnippetList>
     </section>
   );
 }
 
-export const metadata = {
-  title: 'Discover',
-};
-
-export const dynamic = 'force-dynamic';
+// export const metadata = {
+//   title: 'Discover Public Snippets',
+// };

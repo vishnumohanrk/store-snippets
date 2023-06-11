@@ -1,4 +1,4 @@
-import { GoMarkGithub } from 'react-icons/go';
+import { currentUser } from '@clerk/nextjs';
 import {
   MdAddCircle,
   MdAddCircleOutline,
@@ -6,33 +6,29 @@ import {
   MdBookmarkBorder,
   MdCode,
   MdExplore,
-  MdLogout,
   MdOutlineExplore,
 } from 'react-icons/md';
-
-import { getCurrentUser } from '@/lib/session';
 
 import { AuthButton } from './auth-button';
 import { NavItem } from './nav-item';
 import { NavLabel } from './nav-label';
 
 export async function NavList() {
-  const currentUser = await getCurrentUser();
-  const isSignedIn = !!currentUser;
+  const user = await currentUser();
 
   return (
     <>
       <NavItem href="/" icon={<MdOutlineExplore />} activeIcon={<MdExplore />}>
-        <NavLabel alwaysShow={!isSignedIn}>Discover</NavLabel>
+        <NavLabel alwaysShow={!user}>Discover</NavLabel>
       </NavItem>
-      {isSignedIn && (
+      {user && (
         <>
           {/* @ts-expect-error TODO */}
-          <NavItem href={`/user/${currentUser.userName}`} icon={<MdCode />}>
+          <NavItem href={`/user/${user.username}`} icon={<MdCode />}>
             <NavLabel>My Snippets</NavLabel>
           </NavItem>
           <NavItem
-            href="/my-bookmarks"
+            href="/bookmarks"
             icon={<MdBookmarkBorder />}
             activeIcon={<MdBookmark />}
           >
@@ -47,12 +43,7 @@ export async function NavList() {
           </NavItem>
         </>
       )}
-      <AuthButton isSignedIn={isSignedIn}>
-        {isSignedIn ? <MdLogout /> : <GoMarkGithub className="scale-90" />}
-        <NavLabel alwaysShow={!isSignedIn}>
-          Sign {isSignedIn ? 'out' : 'in'}
-        </NavLabel>
-      </AuthButton>
+      <AuthButton authed={!!user} />
     </>
   );
 }

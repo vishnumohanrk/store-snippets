@@ -1,11 +1,11 @@
 import 'server-only';
 
+import { auth } from '@clerk/nextjs';
 import type { Snippet } from '@prisma/client';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
 import { db } from './db';
-import { getCurrentUser } from './session';
 import { highlightCode } from './shiki';
 
 export async function getSnippetFromForm(formData: FormData) {
@@ -26,17 +26,18 @@ export async function getSnippetFromForm(formData: FormData) {
 }
 
 export const validateOwnerAndReturn = cache(async (id: string) => {
-  const currentUser = await getCurrentUser();
+  const { userId } = auth();
 
-  if (!currentUser) {
+  if (!userId) {
     notFound();
   }
 
   const snippet = await db.snippet.findFirst({
-    where: { id, userId: currentUser.id },
+    where: { id, authorId: userId },
     select: {
       title: true,
       codeText: true,
+      authorId: true,
       isPrivate: true,
     },
   });
@@ -45,11 +46,5 @@ export const validateOwnerAndReturn = cache(async (id: string) => {
     notFound();
   }
 
-  return { ...snippet, userId: currentUser.id };
+  return snippet;
 });
-
-export const USER_SELECT = {
-  id: true,
-  image: true,
-  userName: true,
-} as const;

@@ -1,8 +1,8 @@
+import { auth } from '@clerk/nextjs';
 import { revalidatePath } from 'next/cache';
 import { MdBookmark, MdBookmarkBorder } from 'react-icons/md';
 
 import { db } from '@/lib/db';
-import { getCurrentUser } from '@/lib/session';
 
 import { ICON_BTN_CLASS } from '../utils';
 import { BookmarkButton } from './bookmark-button';
@@ -13,15 +13,15 @@ type Props = {
 };
 
 async function bookmarkSnippet(id: string, isBookmarked: boolean) {
-  const currentUser = await getCurrentUser();
+  const { userId } = auth();
 
-  if (!currentUser) {
+  if (!userId) {
     throw new Error('Unauthorized');
   }
 
   const obj = {
+    userId,
     snippetId: id,
-    userId: currentUser.id,
   };
 
   if (isBookmarked) {
@@ -34,7 +34,7 @@ async function bookmarkSnippet(id: string, isBookmarked: boolean) {
     });
   }
 
-  revalidatePath('/snippet/:id');
+  revalidatePath('/snippet/[id]');
   revalidatePath('/my-bookmarks');
 }
 

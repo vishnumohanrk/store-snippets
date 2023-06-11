@@ -11,7 +11,7 @@ import { ButtonGroup } from '../shared/button-group';
 import { FormButton } from '../shared/form-button';
 
 async function changeVisibility(id: string) {
-  const { isPrivate, userId } = await validateOwnerAndReturn(id);
+  const { isPrivate, authorId } = await validateOwnerAndReturn(id);
 
   await db.snippet.update({
     where: { id },
@@ -20,7 +20,7 @@ async function changeVisibility(id: string) {
 
   if (!isPrivate) {
     await db.bookmark.deleteMany({
-      where: { snippetId: id, NOT: { userId } },
+      where: { snippetId: id, NOT: { userId: authorId } },
     });
   }
 

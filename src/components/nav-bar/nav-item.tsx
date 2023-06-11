@@ -18,7 +18,7 @@ export function NavItem({ activeIcon, icon, href, children }: Props) {
   const isActive = pathName === href;
 
   return (
-    <li>
+    <li className="w-full">
       <Link
         href={href}
         className={cn(NAV_ITEM_CLASS, isActive && 'text-neutral-50')}
