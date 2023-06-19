@@ -2,29 +2,29 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { twMerge } from 'tailwind-merge';
 
-import type { RCProps } from '@/types';
+import { NAV_ITEM_CLASS } from '../utils';
 
-import { cn, NAV_ITEM_CLASS } from '../utils';
-
-type Props = RCProps & {
+type Props = {
+  label: React.ReactNode;
   icon: React.ReactNode;
   activeIcon?: React.ReactNode;
   href: React.ComponentProps<typeof Link>['href'];
 };
 
-export function NavItem({ activeIcon, icon, href, children }: Props) {
+export function NavItem({ activeIcon, icon, href, label }: Props) {
   const pathName = usePathname();
   const isActive = pathName === href;
 
   return (
-    <li className="w-full">
+    <li className="grow">
       <Link
         href={href}
-        className={cn(NAV_ITEM_CLASS, isActive && 'text-neutral-50')}
+        className={twMerge(NAV_ITEM_CLASS, isActive && 'text-neutral-50')}
       >
         {isActive && activeIcon ? activeIcon : icon}
-        {children}
+        {label}
       </Link>
     </li>
   );

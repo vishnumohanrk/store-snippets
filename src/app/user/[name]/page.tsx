@@ -1,81 +1,66 @@
-import { auth, clerkClient } from '@clerk/nextjs';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
 
+import { PageCenter } from '@/components/shared/page-center';
 import { Author } from '@/components/snippet/author';
-import { SnippetCard } from '@/components/snippet/card';
 import { SnippetList } from '@/components/snippet/list';
-import { filterUserForUI } from '@/lib/clerk';
+import { USER_SELECT } from '@/lib/constants';
 import { db } from '@/lib/db';
+import { getCurrentUser } from '@/lib/session';
 
 type Props = {
   params: { name: string };
 };
 
-const getUserByUserName = cache(async (name: string) => {
-  const [user] = await clerkClient.users.getUserList({
-    username: [name],
+async function getUserSnippets(name: string) {
+  const user = await db.user.findUnique({
+    where: { userName: name },
+    select: USER_SELECT,
   });
 
   if (!user) {
     notFound();
   }
 
-  return filterUserForUI(user);
-});
+  const [currentUser, snippets] = await Promise.all([
+    getCurrentUser(),
+    db.snippet.findMany({
+      where: { authorId: user.id },
+    }),
+  ]);
 
-async function getUserSnippets(authorId: string) {
-  const { userId } = auth();
-  const snippets = await db.snippet.findMany({
-    where: { authorId },
-    orderBy: { updatedAt: 'desc' },
-  });
-
-  const self = authorId === userId;
+  const self = currentUser?.id === user.id;
 
   return {
+    user,
     self,
     snippets: self ? snippets : snippets.filter((i) => !i.isPrivate),
   };
 }
 
-export default async function UserPage({ params }: Props) {
-  const user = await getUserByUserName(params.name);
-  const { snippets, self } = await getUserSnippets(user.id);
+export default async function UserPage({ params: { name } }: Props) {
+  const { self, snippets, user } = await getUserSnippets(name);
 
   return (
     <section>
+      <h2 className="sr-only">@{user.userName}&apos;s snippets</h2>
       <Author {...user} variant="userPage" />
-      <SnippetList
-        heading={`@${user.username}'s snippets`}
-        empty={snippets.length === 0}
-        emptyElem={
-          <>
-            <p className="text-2xl font-semibold text-neutral-400">
-              {self ? `You don't` : `@${user.username} doesn't`} have any
-              snippets yet.
-            </p>
-            {self && (
-              <Link href="/new" className="font-bold underline">
-                Create New Snippet
-              </Link>
-            )}
-          </>
-        }
-      >
-        {snippets.map((i) => (
-          <SnippetCard {...i} key={i.id} variant="list" />
-        ))}
-      </SnippetList>
+      {snippets.length ? (
+        <SnippetList snippets={snippets} />
+      ) : (
+        <PageCenter
+          className="min-h-[85dvh]"
+          text={`${
+            self ? `You don't` : `@${user.userName} doesn't`
+          } have any snippets yet.`}
+        >
+          {self && (
+            <Link href="/snippet/new" className="font-bold underline">
+              Create New Snippet
+            </Link>
+          )}
+        </PageCenter>
+      )}
     </section>
   );
 }
-
-// export async function generateMetadata({ params }: Props) {
-//   const { username } = await getUserByUserName(params.name);
-
-//   return {
-//     title: `${username}'s snippets`,
-//   };
-// }

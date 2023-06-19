@@ -1,6 +1,6 @@
-import type { TSnippetVariant } from '@/types';
+import { twMerge } from 'tailwind-merge';
 
-import { cn } from '../utils';
+import type { TSnippetVariant } from '@/types';
 
 export function Skeleton({ variant = 'full' }: { variant?: TSnippetVariant }) {
   return (
@@ -13,13 +13,13 @@ export function Skeleton({ variant = 'full' }: { variant?: TSnippetVariant }) {
         </div>
       </div>
       <div
-        className={cn(
+        className={twMerge(
           'w-full animate-pulse overflow-hidden rounded-md border',
           variant === 'full' ? 'h-80' : 'h-56'
         )}
       >
         <div
-          className={cn(
+          className={twMerge(
             'flex items-center border-b bg-neutral-900 px-4',
             variant === 'list' ? 'h-10' : 'h-12'
           )}
@@ -37,5 +37,7 @@ export function Skeleton({ variant = 'full' }: { variant?: TSnippetVariant }) {
 }
 
 function TextSkeleton({ className = 'w-full' }) {
-  return <div className={cn(className, 'h-5 rounded-md bg-neutral-50/50')} />;
+  return (
+    <div className={twMerge(className, 'h-5 rounded-md bg-neutral-50/50')} />
+  );
 }

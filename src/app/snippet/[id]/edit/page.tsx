@@ -3,18 +3,14 @@ import { redirect } from 'next/navigation';
 
 import { SnippetForm } from '@/components/snippet/form';
 import { db } from '@/lib/db';
-import { getSnippetFromForm, validateOwnerAndReturn } from '@/lib/utils';
+import { getFromFrom, validateOwnerAndReturn } from '@/lib/utils';
 import type { SnippetPageProps } from '@/types';
 
 async function updateSnippet(id: string, formData: FormData) {
-  const [fromForm] = await Promise.all([
-    getSnippetFromForm(formData),
-    validateOwnerAndReturn(id),
-  ]);
-
+  await validateOwnerAndReturn(id);
   await db.snippet.update({
     where: { id },
-    data: fromForm,
+    data: getFromFrom(formData),
   });
 
   revalidatePath('/');
@@ -40,11 +36,3 @@ export default async function EditPage({ params }: SnippetPageProps) {
     />
   );
 }
-
-// export async function generateMetadata({ params }: SnippetPageProps) {
-//   const { title } = await validateOwnerAndReturn(params.id);
-
-//   return {
-//     title: `Editing ${title}`,
-//   };
-// }

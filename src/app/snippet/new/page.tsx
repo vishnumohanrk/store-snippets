@@ -1,23 +1,17 @@
-import { auth } from '@clerk/nextjs';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { SnippetForm } from '@/components/snippet/form';
 import { db } from '@/lib/db';
-import { getSnippetFromForm } from '@/lib/utils';
+import { getAuthUserId } from '@/lib/session';
+import { getFromFrom } from '@/lib/utils';
 
 async function action(formData: FormData) {
   'use server';
-  const { userId } = auth();
-  const fromForm = await getSnippetFromForm(formData);
-
-  if (!userId) {
-    throw new Error('Unauthorized');
-  }
-
+  const userId = await getAuthUserId();
   const snippet = await db.snippet.create({
     data: {
-      ...fromForm,
+      ...getFromFrom(formData),
       authorId: userId,
       isPrivate: formData.has('private'),
     },
@@ -29,10 +23,6 @@ async function action(formData: FormData) {
   redirect(`/snippet/${snippet.id}`);
 }
 
-export default function CreateNewSnippet() {
+export default function NewSnippetPage() {
   return <SnippetForm action={action} type="create" />;
 }
-
-// export const metadata = {
-//   title: 'Create New Snippet',
-// };

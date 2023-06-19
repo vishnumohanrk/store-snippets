@@ -1,22 +1,13 @@
-import type { RCProps } from '@/types';
+import type { Snippet } from '@prisma/client';
 
-import { PageCenter } from '../shared/page-center';
+import { SnippetCard } from './card';
 
-type Props = RCProps & {
-  heading: string;
-  empty?: boolean;
-  emptyElem?: React.ReactNode;
-};
-
-export function SnippetList({ heading, children, empty, emptyElem }: Props) {
+export function SnippetList({ snippets }: { snippets: Snippet[] }) {
   return (
-    <>
-      <h2 className="sr-only">{heading}</h2>
-      {empty ? (
-        <PageCenter className="min-h-[75svh]">{emptyElem}</PageCenter>
-      ) : (
-        <ul className="space-y-6">{children}</ul>
-      )}
-    </>
+    <ul className="space-y-6">
+      {snippets.map((i) => (
+        <SnippetCard {...i} key={i.id} variant="list" />
+      ))}
+    </ul>
   );
 }

@@ -5,16 +5,20 @@
 @layer base {
   :root {
     color-scheme: dark;
-    --ht: calc(100svh - 6rem);
+    --ht: calc(100dvh - 6rem);
   }
 
   @screen md {
     :root {
-      --ht: calc(100svh - 2rem);
+      --ht: calc(100dvh - 2rem);
     }
   }
 
   .nav-item svg {
     @apply h-8 w-8 md:h-6 md:w-6;
+  }
+
+  .bright pre {
+    @apply !bg-transparent;
   }
 }

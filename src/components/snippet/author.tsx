@@ -1,43 +1,44 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
 
 import type { TAuthorDetails, TSnippetVariant } from '@/types';
-
-import { cn } from '../utils';
 
 type Props = TAuthorDetails & {
   subText?: React.ReactNode;
   variant: TSnippetVariant | 'userPage';
 };
 
-export function Author({ subText, variant, imageUrl, username }: Props) {
-  const className = cn(
+export function Author({ subText, variant, image, userName }: Props) {
+  const className = twMerge(
     variant !== 'list' && 'text-lg',
     variant !== 'userPage' && 'hover:underline',
-    'font-bold text-neutral-50'
+    'font-bold'
   );
 
   const size = variant === 'list' ? 44 : 48;
 
   return (
-    <div className="mb-4 flex items-center gap-3 text-neutral-400">
-      <img
-        width={size}
-        height={size}
-        loading="lazy"
-        src={imageUrl}
-        alt={`@${username}`}
-        className="rounded-full object-cover"
-      />
-      <div className="flex-1">
-        {variant === 'userPage' || !username ? (
-          <p className={className}>{username ?? '[nousername]'}</p>
+    <div className="mb-4 flex items-center gap-3">
+      {image && (
+        <img
+          src={image}
+          width={size}
+          height={size}
+          loading="lazy"
+          alt={`@${userName}`}
+          className="rounded-full object-cover"
+        />
+      )}
+      <div className="grow">
+        {variant === 'userPage' || !userName ? (
+          <p className={className}>{userName ?? '[nousername]'}</p>
         ) : (
-          <Link href={`/user/${username}`} className={className}>
-            {username}
+          <Link href={`/user/${userName}`} className={className}>
+            {userName}
           </Link>
         )}
-        <div className="text-sm">{subText}</div>
+        <div className="text-sm text-neutral-400">{subText}</div>
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
     serverActions: true,
-    serverComponentsExternalPackages: ['shiki', 'vscode-oniguruma'],
   },
 };
 

@@ -1,12 +1,8 @@
 type Props = {
-  alwaysShow?: boolean;
-  children: string | string[];
+  text: string;
+  authed?: boolean;
 };
 
-export function NavLabel({ children, alwaysShow = false }: Props) {
-  return (
-    <span className={alwaysShow ? '' : 'sr-only md:not-sr-only'}>
-      {children}
-    </span>
-  );
+export function NavLabel({ text, authed = true }: Props) {
+  return <span className={authed ? 'max-md:sr-only' : ''}>{text}</span>;
 }

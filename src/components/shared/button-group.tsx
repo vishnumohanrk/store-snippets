@@ -1,24 +1,30 @@
-import type { RCProps } from '@/types';
+import { Slot } from '@radix-ui/react-slot';
+import { twMerge } from 'tailwind-merge';
 
-import { cn } from '../utils';
-
-type Props = RCProps & {
+type Props = {
   wrap?: boolean;
+  asChild?: boolean;
   className?: string;
-  action?: React.ComponentProps<'form'>['action'];
+  children: React.ReactNode;
 };
 
-export function ButtonGroup({ className, wrap = true, ...rest }: Props) {
-  const Comp = rest.action ? 'form' : 'div';
+export function ButtonGroup({
+  children,
+  className,
+  wrap = true,
+  asChild = false,
+}: Props) {
+  const Comp = asChild ? Slot : 'div';
 
   return (
     <Comp
-      {...rest}
-      className={cn(
+      className={twMerge(
         'flex justify-end gap-4',
         wrap && 'max-md:flex-wrap max-md:[&>*]:w-full',
         className
       )}
-    />
+    >
+      {children}
+    </Comp>
   );
 }

@@ -1,27 +1,23 @@
-import type { Never } from '@/types';
-
 import { ButtonGroup } from '../shared/button-group';
 import { FormButton } from '../shared/form-button';
 import { FormInput } from './form-input';
-
-type TFormVariant = 'create' | 'update';
 
 type ReqProps = {
   defaultTitle: string;
   defaultContent: string;
 };
 
-type Props<T extends TFormVariant> = {
-  type: T;
-  action: React.ComponentProps<'form'>['action'];
-} & (T extends 'update' ? ReqProps : Never<ReqProps>);
+type Props = { action: React.ComponentProps<'form'>['action'] } & (
+  | ({ type: 'create' } & Partial<ReqProps>)
+  | ({ type: 'update' } & ReqProps)
+);
 
-export function SnippetForm<T extends TFormVariant>({
+export function SnippetForm({
   type,
   action,
   defaultTitle,
   defaultContent,
-}: Props<T>) {
+}: Props) {
   return (
     <form className="flex min-h-[--ht] flex-col" action={action}>
       <FormInput
@@ -36,7 +32,7 @@ export function SnippetForm<T extends TFormVariant>({
         variant="textarea"
         placeholder="Code"
         defaultValue={defaultContent}
-        className="flex-1 resize-none rounded-b-md border bg-transparent p-4"
+        className="grow resize-none rounded-b-md border bg-transparent p-4"
       />
       <ButtonGroup className="mt-4">
         {type === 'create' && (

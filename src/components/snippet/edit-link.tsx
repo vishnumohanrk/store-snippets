@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { MdModeEditOutline } from 'react-icons/md';
 
-import { ICON_BTN_CLASS } from '@/components/utils';
+import { ICON_BTN_CLASS } from '../utils';
 
 export function EditLink({ id }: { id: string }) {
   return (

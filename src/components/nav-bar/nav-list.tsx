@@ -1,4 +1,3 @@
-import { currentUser } from '@clerk/nextjs';
 import {
   MdAddCircle,
   MdAddCircleOutline,
@@ -6,44 +5,55 @@ import {
   MdBookmarkBorder,
   MdCode,
   MdExplore,
+  MdLogin,
+  MdLogout,
   MdOutlineExplore,
 } from 'react-icons/md';
+
+import { getCurrentUser } from '@/lib/session';
 
 import { AuthButton } from './auth-button';
 import { NavItem } from './nav-item';
 import { NavLabel } from './nav-label';
 
 export async function NavList() {
-  const user = await currentUser();
+  const currentUser = await getCurrentUser();
+  const authed = !!currentUser?.userName;
 
   return (
     <>
-      <NavItem href="/" icon={<MdOutlineExplore />} activeIcon={<MdExplore />}>
-        <NavLabel alwaysShow={!user}>Discover</NavLabel>
-      </NavItem>
-      {user && (
+      <NavItem
+        href="/"
+        activeIcon={<MdExplore />}
+        icon={<MdOutlineExplore />}
+        label={<NavLabel authed={authed} text="Discover" />}
+      />
+      {authed && (
         <>
-          {/* @ts-expect-error TODO */}
-          <NavItem href={`/user/${user.username}`} icon={<MdCode />}>
-            <NavLabel>My Snippets</NavLabel>
-          </NavItem>
+          <NavItem
+            icon={<MdCode />}
+            // @ts-expect-error TODO
+            href={`/user/${currentUser.userName}`}
+            label={<NavLabel text="My Snippets" />}
+          />
+          <NavItem
+            href="/snippet/new"
+            icon={<MdAddCircleOutline />}
+            activeIcon={<MdAddCircle />}
+            label={<NavLabel text="Create Snippet" />}
+          />
           <NavItem
             href="/bookmarks"
             icon={<MdBookmarkBorder />}
             activeIcon={<MdBookmark />}
-          >
-            <NavLabel>My Bookmarks</NavLabel>
-          </NavItem>
-          <NavItem
-            href="/new"
-            icon={<MdAddCircleOutline />}
-            activeIcon={<MdAddCircle />}
-          >
-            <NavLabel>Create Snippet</NavLabel>
-          </NavItem>
+            label={<NavLabel text="My Bookmarks" />}
+          />
         </>
       )}
-      <AuthButton authed={!!user} />
+      <AuthButton authed={authed}>
+        {authed ? <MdLogout /> : <MdLogin />}
+        <NavLabel authed={authed} text={`Sign ${authed ? 'out' : 'in'}`} />
+      </AuthButton>
     </>
   );
 }

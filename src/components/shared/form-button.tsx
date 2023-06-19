@@ -3,7 +3,8 @@
 import { forwardRef } from 'react';
 import { experimental_useFormStatus as useFormStatus } from 'react-dom';
 
-import { Button, type ButtonProps } from './button';
+import type { ButtonProps } from './button';
+import { Button } from './button';
 
 export const FormButton = forwardRef<
   HTMLButtonElement,

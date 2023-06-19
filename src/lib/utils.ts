@@ -1,39 +1,26 @@
-import 'server-only';
-
-import { auth } from '@clerk/nextjs';
-import type { Snippet } from '@prisma/client';
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
 
 import { db } from './db';
-import { highlightCode } from './shiki';
+import { getAuthUserId } from './session';
 
-export async function getSnippetFromForm(formData: FormData) {
-  const { title, code } = Object.fromEntries(formData);
+export function getFromFrom(formData: FormData) {
+  const title = formData.get('title');
+  const codeText = formData.get('code');
 
-  if (typeof title !== 'string' || typeof code !== 'string') {
-    throw new Error('Bad Input');
+  if (typeof title === 'string' && typeof codeText === 'string') {
+    return {
+      title,
+      codeText,
+    };
   }
 
-  const extension = title.split('.').at(-1) || '';
-  const codeHTML = await highlightCode(code, extension);
-
-  return {
-    title,
-    codeHTML,
-    codeText: code,
-  } satisfies Pick<Snippet, 'codeHTML' | 'codeText' | 'title'>;
+  throw new Error('Bad Input');
 }
 
-export const validateOwnerAndReturn = cache(async (id: string) => {
-  const { userId } = auth();
-
-  if (!userId) {
-    notFound();
-  }
-
+export async function validateOwnerAndReturn(id: string) {
+  const authorId = await getAuthUserId();
   const snippet = await db.snippet.findFirst({
-    where: { id, authorId: userId },
+    where: { id, authorId },
     select: {
       title: true,
       codeText: true,
@@ -47,4 +34,4 @@ export const validateOwnerAndReturn = cache(async (id: string) => {
   }
 
   return snippet;
-});
+}

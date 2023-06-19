@@ -1,12 +1,6 @@
-import type { User } from '@clerk/nextjs/server';
+import type { User } from '@prisma/client';
 
-export type RCProps = {
-  children: React.ReactNode;
-};
-
-export type Never<T> = {
-  [K in keyof T]?: never;
-};
+import type { USER_SELECT } from '@/lib/constants';
 
 export type TSnippetVariant = 'full' | 'list';
 
@@ -14,4 +8,4 @@ export type SnippetPageProps = {
   params: { id: string };
 };
 
-export type TAuthorDetails = Pick<User, 'id' | 'imageUrl' | 'username'>;
+export type TAuthorDetails = Pick<User, keyof typeof USER_SELECT>;

@@ -1,11 +1,12 @@
 import type { Snippet } from '@prisma/client';
 import { Fragment } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import type { TAuthorDetails, TSnippetVariant } from '@/types';
 
 import { Time } from '../shared/time';
-import { cn } from '../utils';
 import { Author } from './author';
+import { SnippetCode } from './code';
 import { CopyButton } from './copy-button';
 import { OverlayLink } from './overlay-link';
 import { PrivateBadge } from './private-badge';
@@ -22,7 +23,6 @@ export function SnippetCard({
   author,
   variant,
   children,
-  codeHTML,
   codeText,
   isPrivate,
   updatedAt,
@@ -40,13 +40,8 @@ export function SnippetCard({
       )}
       <article className="group relative overflow-hidden rounded-md border">
         {variant === 'list' && <OverlayLink id={id} />}
-        <header
-          className={cn(
-            'flex items-center justify-between border-b bg-neutral-900 pl-4 pr-2',
-            variant === 'list' ? 'h-10' : 'h-12'
-          )}
-        >
-          <h3 className="line-clamp-1 flex-1">
+        <header className="flex h-12 items-center justify-between border-b bg-neutral-900 pl-4 pr-2">
+          <h3 className="line-clamp-1 grow">
             {title}
             {isPrivate && <PrivateBadge />}
           </h3>
@@ -56,12 +51,13 @@ export function SnippetCard({
           </div>
         </header>
         <div
-          dangerouslySetInnerHTML={{ __html: codeHTML }}
-          className={cn(
+          className={twMerge(
             variant === 'list' ? 'max-h-64 overflow-hidden' : 'overflow-auto',
-            'p-4'
+            'bright'
           )}
-        />
+        >
+          <SnippetCode title={title} codeText={codeText} />
+        </div>
       </article>
     </Wrapper>
   );
