@@ -64,3 +64,5 @@ export default async function UserPage({ params: { name } }: Props) {
     </section>
   );
 }
+
+export const fetchCache = 'default-cache';

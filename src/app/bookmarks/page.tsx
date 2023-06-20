@@ -35,3 +35,5 @@ export default async function BookmarksPage() {
     </section>
   );
 }
+
+export const fetchCache = 'default-cache';

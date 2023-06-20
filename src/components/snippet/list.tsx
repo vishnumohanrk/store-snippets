@@ -4,7 +4,7 @@ import { SnippetCard } from './card';
 
 export function SnippetList({ snippets }: { snippets: Snippet[] }) {
   return (
-    <ul className="space-y-6">
+    <ul className="space-y-6 md:pb-20">
       {snippets.map((i) => (
         <SnippetCard {...i} key={i.id} variant="list" />
       ))}

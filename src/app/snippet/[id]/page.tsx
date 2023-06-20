@@ -51,3 +51,5 @@ export default async function SnippetPage({ params }: SnippetPageProps) {
     </>
   );
 }
+
+export const fetchCache = 'default-cache';

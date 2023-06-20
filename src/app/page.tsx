@@ -26,3 +26,5 @@ export default async function AppHome() {
     </section>
   );
 }
+
+export const fetchCache = 'default-cache';

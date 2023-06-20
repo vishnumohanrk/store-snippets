@@ -26,5 +26,3 @@ export const metadata = {
   title: 'Store Snippets',
   description: 'A Code Snippet storing, sharing app',
 };
-
-export const fetchCache = 'default-cache';
