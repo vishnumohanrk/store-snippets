@@ -50,6 +50,8 @@ model User {
   sessions      Session[]
   snippets      Snippet[]
   bookmarks     Bookmark[]
+
+  @@index([userName])
 }
 
 model VerificationToken {
