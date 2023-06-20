@@ -26,6 +26,7 @@ async function getUserSnippets(name: string) {
     getCurrentUser(),
     db.snippet.findMany({
       where: { authorId: user.id },
+      orderBy: { updatedAt: 'desc' },
     }),
   ]);
 
